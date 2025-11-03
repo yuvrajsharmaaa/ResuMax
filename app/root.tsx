@@ -11,6 +11,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import {usePuterStore} from "~/lib/puter";
 import {useEffect} from "react";
+import puter from "@heyputer/puter.js";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -29,7 +30,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { init } = usePuterStore();
 
   useEffect(() => {
-    init()
+    // Make puter available globally for compatibility
+    if (typeof window !== 'undefined') {
+      (window as any).puter = puter;
+    }
+    init();
   }, [init]);
 
   return (
@@ -41,7 +46,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <script src="https://js.puter.com/v2/"></script>
         {children}
         <ScrollRestoration />
         <Scripts />
