@@ -29,31 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { init } = usePuterStore();
 
   useEffect(() => {
-    // Dynamically load Puter.js with error handling
-    const loadPuterScript = () => {
-      const script = document.createElement('script');
-      script.src = 'https://js.puter.com/v2/';
-      script.async = true;
-      script.crossOrigin = 'anonymous';
-      
-      script.onload = () => {
-        console.log('✅ Puter.js loaded successfully');
-        init();
-      };
-      
-      script.onerror = (error) => {
-        console.error('❌ Failed to load Puter.js:', error);
-        console.error('This is likely due to SSL certificate issues on your system');
-        console.error('Possible solutions:');
-        console.error('1. Update your system certificates');
-        console.error('2. Check your antivirus/firewall settings');
-        console.error('3. Try a different network/browser');
-      };
-      
-      document.head.appendChild(script);
-    };
-
-    loadPuterScript();
+    init()
   }, [init]);
 
   return (
@@ -65,6 +41,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <script src="https://js.puter.com/v2/"></script>
         {children}
         <ScrollRestoration />
         <Scripts />
