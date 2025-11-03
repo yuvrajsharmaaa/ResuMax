@@ -230,27 +230,40 @@ export const usePuterStore = create<PuterStore>((set, get) => {
     };
 
     const init = (): void => {
+        console.log('🔄 Initializing Puter.js...');
         const puter = getPuter();
         if (puter) {
+            console.log('✅ Puter.js already available');
             set({ puterReady: true });
             checkAuthStatus();
             return;
         }
 
+        let attempts = 0;
+        const maxAttempts = 100; // 10 seconds (100 * 100ms)
+        
         const interval = setInterval(() => {
-            if (getPuter()) {
+            attempts++;
+            const currentPuter = getPuter();
+            
+            if (currentPuter) {
+                console.log(`✅ Puter.js loaded after ${attempts * 100}ms`);
                 clearInterval(interval);
                 set({ puterReady: true });
                 checkAuthStatus();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                console.error('❌ Puter.js failed to load within 10 seconds');
+                console.error('Possible causes:');
+                console.error('1. SSL certificate error (net::ERR_CERT_AUTHORITY_INVALID)');
+                console.error('2. Network connectivity issues');
+                console.error('3. Firewall/antivirus blocking the script');
+                console.error('4. Browser security settings');
+                setError("Failed to load AI service. Please check console for details and refresh the page.");
+            } else if (attempts % 25 === 0) {
+                console.log(`⏳ Still waiting for Puter.js... (${attempts * 100}ms)`);
             }
         }, 100);
-
-        setTimeout(() => {
-            clearInterval(interval);
-            if (!getPuter()) {
-                setError("Puter.js failed to load within 10 seconds");
-            }
-        }, 10000);
     };
 
     const write = async (path: string, data: string | File | Blob) => {

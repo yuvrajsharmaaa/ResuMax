@@ -157,10 +157,42 @@ const Upload = () => {
                             <h2>{statusText}</h2>
                             <img src="/images/resume-scan.gif" className="w-full" />
                         </>
+                    ) : isLoading ? (
+                        <>
+                            <h2>Loading AI services...</h2>
+                            <div className="flex items-center justify-center mt-4">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-2">Please wait while we connect to the AI service...</p>
+                        </>
                     ) : (
                         <h2>Drop your resume for an ATS score and improvement tips</h2>
                     )}
-                    {!isProcessing && (
+                    
+                    {!isLoading && !isProcessing && !window.puter && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg mt-4 max-w-2xl">
+                            <h3 className="font-bold text-lg mb-2">⚠️ SSL Certificate Error</h3>
+                            <p className="mb-3">The AI service (Puter.js) failed to load due to a certificate validation error.</p>
+                            <div className="text-sm">
+                                <p className="font-semibold mb-2">Quick fixes:</p>
+                                <ol className="list-decimal list-inside space-y-1 ml-2">
+                                    <li>Refresh the page (Ctrl+Shift+R or Cmd+Shift+R)</li>
+                                    <li>Try a different browser (Chrome, Firefox, or Edge)</li>
+                                    <li>Disable antivirus/firewall temporarily</li>
+                                    <li>Check if you can access: <a href="https://js.puter.com/v2/" target="_blank" className="underline">https://js.puter.com/v2/</a></li>
+                                    <li>Update your system's SSL certificates</li>
+                                </ol>
+                            </div>
+                            <button 
+                                onClick={() => window.location.reload()} 
+                                className="mt-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+                            >
+                                🔄 Retry
+                            </button>
+                        </div>
+                    )}
+                    
+                    {!isProcessing && !isLoading && window.puter && (
                         <form id="upload-form" onSubmit={handleSubmit} className="flex flex-col gap-4 mt-8">
                             <div className="form-div">
                                 <label htmlFor="company-name">Company Name</label>
